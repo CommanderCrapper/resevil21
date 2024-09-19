@@ -3,6 +3,13 @@ import time
 
 # Pedro actually had a really cool idea about "fake" trump cards, where a trump card can be drawn for the other person where it has the inverse effect of what is actually on the card. 
 
+# LIST OF CHANGES:
+# fixed check for whether or not trump card was in player list
+# added the check for what trump card was selected
+# not sure if it'll work but whatever
+# adjusted the new game function, made some new separate functions that only run when a game is being started
+# HOPEFULLY fixed the one trump card that gets rid of 2 trumps & draws 3 new ones.
+
 playerCards = []
 botCards = []
 playerValue = 0
@@ -25,7 +32,26 @@ turn = 0
 
 use = 0
 
-def playerTurn():
+def addTrump():
+    # ONLY TO BE USED IN BEGINNING OF A NEW GAME!!!!
+    randomNum = random.randrange(1,11)
+    botTrumpList.append(randomNum)
+    randomNum = random.randrange(1,11)
+    playerTrumpList.append(randomNum)
+
+def addCards():
+    # ONLY TO BE USED IN THE BEGINNING OF A NEW GAME!!!!
+    randomNum = random.randrange(1,11)
+    playerCards.append(randomNum)
+    randomNum = random.randrange(1,11)
+    playerCards.append(randomNum)
+    randomNum = random.randrange(1,11)
+    botCards.append(randomNum)
+    randomNum = random.randrange(1,11)
+    botCards.append(randomNum)
+
+
+def playerTurn(botStatus, turn, playerStatus):
     playerTrumpDisplay = []
     # Display options, ask for input, follow from there
     optionsList = ['trump', 'hit', 'stay']
@@ -33,7 +59,6 @@ def playerTurn():
     if (choice in optionsList) == False:
         playerTurn()
     if choice == 'trump':
-        # fix this part
         for i in playerTrumpList:
             playerTrumpDisplay.append(i)
         print('Your trump cards: ', playerTrumpDisplay, '\n' '\n')
@@ -41,18 +66,41 @@ def playerTurn():
         choice2 = input('What trump card will you use? (type the ID (starting from 0) of the trump card you want to use, or type "back" to return to the previous menu)')
         if(choice2 == 'back'):
             playerTurn()
-        if (choice2 in playerTrumpList) == False:
+            # fix this part
+        if choice2 in playerTrumpList == False:
             choice2 = input('Trump card not in the list! Please input a valid response. Type "back" to return to the previous menu if needed.')
-        if choice2 == 'back':
-            playerTurn()
-        elif choice == 'hit':
+        else:
+            # there's probably a much easier way to do this that takes up even less lines of code, but eh, fuck it
+            if choice2 == 0:
+                draw3()
+            elif choice2 == 1:
+                draw4()
+            elif choice2 == 2:
+                draw5()
+            elif choice2 == 3:
+                draw6()
+            elif choice2 == 4:
+                draw7()
+            elif choice2 == 5:
+                removeCard()
+            elif choice2 == 6:
+                returnCard()
+            elif choice2 == 7:
+                exchangeCard()
+            elif choice2 == 8:
+                trumpSwitch()
+            elif choice2 == 9:
+                drawPerfect()
+            elif choice2 == 10:
+                happiness()
+        if choice == 'hit':
             drawPlayer()
             playerStatus = 0
             botStatus = 0
         elif choice == 'stay':
             playerStatus = 1
         else:
-            playerTurn()
+            print('something got fucked up I think')
         if botStatus == 0:
             turn = 1
         if playerStatus == 1 and botStatus == 1:
@@ -60,15 +108,9 @@ def playerTurn():
 
 # Do I have to add the variables used below as a parameter?
 def startGame(turn):
-    playerCards = []
-    botCards = []
-    playerValue = 0
-    botValue = 0
-    usedCards = []
-    drawPlayer(playerValue)
-    drawPlayer(playerValue)
-    drawBot(botValue)
-    drawBot(botValue)
+    addCards()
+    addTrump()
+    updateScreen()
     # give turn to opposite player when new game starts
     if turn == 0:
         turn = 1
@@ -314,29 +356,34 @@ def exchangeCard():
     updateScreen()
 
 def trumpSwitch():
-    random1 = 0
-    random2 = 0
+    temp = playerTrumpList.index(random1)
+    temp2 = playerTrumpList.index(random2)
     if turn == 0:
-        random1 = random.randrange(0, len(playerTrumpList))
-        random2 = random.randrange(0, len(playerTrumpList))
-        playerTrumpList.pop(random1)
-        playerTrumpList.pop(random2)
-        # Not entirely sure how to do for loops for a specified amount instead of smth like "for x in length of this list"
-        for i in 3:
-            randomNum = random.randrange(1,11)
-            playerTrumpList.append(randomNum)
         usedTrump = playerTrumpList.findIndexOf(8)
         playerTrumpList.pop(usedTrump)
+        random1 = random.randrange(0, len(playerTrumpList))
+        temp = playerTrumpList.index(random1)
+        playerTrumpList.pop(temp)
+        random2 = random.randrange(0, len(playerTrumpList))
+        temp = playerTrumpList.index(random2)
+        playerTrumpList.pop(temp)
+        # Not entirely sure how to do for loops for a specified amount instead of smth like "for x in length of this list"
+        for i in 3:
+            randomNum = random.randrange(0,11)
+            playerTrumpList.append(randomNum)
     else:
-        random1 = random.randrange(0, len(botTrumpList))
+        usedTrump = botTrumpList.findIndexOf(8)
+        botTrumpList.pop(usedTrump)
+        
         random2 = random.randrange(0, len(botTrumpList))
-        botTrumpList.pop(random1)
-        botTrumpList.pop(random2)
+        temp2 = botTrumpList.index(random2)
+        botTrumpList.pop(temp2)
+        random2 = random.randrange(0, len(botTrumpList))
+        temp2 = botTrumpList.index(random2)
+        botTrumpList.pop(temp2)
         for i in 3:
             random = random.randrange(0,11)
             botTrumpList.append(randomNum)
-        usedTrump = botTrumpList.findIndexOf(8)
-        botTrumpList.pop(usedTrump)
 
 def drawPerfect():
     if turn == 0:
@@ -475,4 +522,4 @@ while playerStatus == 0 or botStatus == 0:
         turn = 0
         updateScreen()
     else:
-        playerTurn()
+        playerTurn(botStatus, turn, playerStatus)
