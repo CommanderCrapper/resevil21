@@ -1,6 +1,8 @@
 import random
 import time
 
+# Pedro actually had a really cool idea about "fake" trump cards, where a trump card can be drawn for the other person where it has the inverse effect of what is actually on the card. 
+
 playerCards = []
 botCards = []
 playerValue = 0
@@ -33,10 +35,10 @@ def playerTurn():
     if choice == 'trump':
         # fix this part
         for i in playerTrumpList:
-            current = playerTrumpList.index(i)
-            playerTrumpDisplay.append(current)
-        print(playerTrumpDisplay)
-        choice2 = input('What trump card will you use? (type the ID (starting from 0) of the trump card you want to use, then type "back" to return to the previous menu)')
+            playerTrumpDisplay.append(i)
+        print('Your trump cards: ', playerTrumpDisplay, '\n' '\n')
+        print('ID LIST & FUNCTIONS:', '\n', 'id 0-4 = draw 3-7', '\n', 'id 5 = remove opponent card', '\n', 'id 6 = remove last card for you', '\n', 'id 7 = swap latest cards with bot', '\n', 'id 8 = get rid of 2 random trump cards & draw 3 new ones', '\n', 'id 9 = draw perfect card to reach 21 (if available)', '\n', 'id 10 = both you & your opponent draw a trump card')
+        choice2 = input('What trump card will you use? (type the ID (starting from 0) of the trump card you want to use, or type "back" to return to the previous menu)')
         if(choice2 == 'back'):
             playerTurn()
         if (choice2 in playerTrumpList) == False:
@@ -136,11 +138,13 @@ def updateScreen():
 def trumpCheck():
     determinant = random.randrange(1,10)
     if determinant == 5:
-        randomNum = random.randrange(1,11)
+        randomNum = random.randrange(0,11)
         if turn == 0:
             playerTrumpList.append(randomNum)
+            print('appended ', randomNum, 'to playerTrumpList')
         else:
             botTrumpList.append(randomNum)
+            print('appended ', randomNum, 'to botTrumpList')
 
 
 def showdown():
