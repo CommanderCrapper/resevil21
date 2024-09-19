@@ -24,14 +24,22 @@ turn = 0
 use = 0
 
 def playerTurn():
+    playerTrumpDisplay = []
     # Display options, ask for input, follow from there
-    choice = input('What will you do? (Type trump, hit or stay. Choices are case-sensitive, so make sure you type them correctly!)')
+    optionsList = ['trump', 'hit', 'stay']
+    choice = input('What will you do? (Type "trump", "hit" or "stay". Choices are case-sensitive, so make sure you type them correctly!)')
+    if (choice in optionsList) == False:
+        playerTurn()
     if choice == 'trump':
         # fix this part
-        for i in len(playerTrumpList):
-            print(playerTrumpList[i])
+        for i in playerTrumpList:
+            current = playerTrumpList.index(i)
+            playerTrumpDisplay.append(current)
+        print(playerTrumpDisplay)
         choice2 = input('What trump card will you use? (type the ID (starting from 0) of the trump card you want to use, then type "back" to return to the previous menu)')
-        if playerTrumpList.includes(choice2) == False:
+        if(choice2 == 'back'):
+            playerTurn()
+        if (choice2 in playerTrumpList) == False:
             choice2 = input('Trump card not in the list! Please input a valid response. Type "back" to return to the previous menu if needed.')
         if choice2 == 'back':
             playerTurn()
@@ -49,7 +57,7 @@ def playerTurn():
             showdown()
 
 # Do I have to add the variables used below as a parameter?
-def startGame():
+def startGame(turn):
     playerCards = []
     botCards = []
     playerValue = 0
@@ -72,7 +80,7 @@ def drawPlayer(playerValue):
     if (randomNum in usedCards) or (randomNum in botCards):
         while (randomNum in playerCards) or (randomNum in botCards):
             randomNum = random.randrange(1,11)
-            failcount = failcount + 1
+            failCount += 1
             if failCount == 20:
                 use = -1
                 break
@@ -368,7 +376,7 @@ def happiness():
         botTrumpList.findIndexOf(10)
         botTrumpList.pop(10)
 
-startGame()
+startGame(turn)
 
 # HERE'S the actual game stuff that determines when the game is active & whatnot
 while playerStatus == 0 or botStatus == 0:
