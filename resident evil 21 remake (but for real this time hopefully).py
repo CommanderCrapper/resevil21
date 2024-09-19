@@ -83,7 +83,7 @@ def drawPlayer(playerValue):
         playerValue = playerValue + randomNum
         usedCards.append(randomNum)
         turn = 1
-# test
+
 def drawBot(botValue):
     randomNum = random.randrange(1,11)
     if (randomNum in usedCards) or (randomNum in botCards):
